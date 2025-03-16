@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import DataTable from "react-data-table-component";
-import { FaEdit, FaTrash, FaCheck } from "react-icons/fa"; 
+import { FaEdit, FaTrash, FaCheck, FaUndo } from "react-icons/fa"; 
 
 interface Task {
   id: number;
@@ -59,22 +59,46 @@ const TodoList = () => {
   };
 
   const handleMarkAsDone = async (taskId: number) => {
-    const token = localStorage.getItem("access_token");
+    if (window.confirm("Deseja marcar esta tarefa como concluída?")) {
+      const token = localStorage.getItem("access_token");
 
-    try {
-      await axios.patch(
-        `http://localhost:8000/api/tasks/${taskId}/status`,
-        { status: "completed" },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      try {
+        await axios.patch(
+          `http://localhost:8000/api/tasks/${taskId}/status`,
+          { status: "completed" },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
 
-      setTasks(
-        tasks.map(task =>
-          task.id === taskId ? { ...task, status: "completed" } : task
-        )
-      );
-    } catch (error) {
-      console.error("Erro ao marcar como feito:", error);
+        setTasks(
+          tasks.map(task =>
+            task.id === taskId ? { ...task, status: "completed" } : task
+          )
+        );
+      } catch (error) {
+        console.error("Erro ao marcar como feito:", error);
+      }
+    }
+  };
+
+  const handleRevertToPending = async (taskId: number) => {
+    if (window.confirm("Deseja reverter esta tarefa para pendente?")) {
+      const token = localStorage.getItem("access_token");
+
+      try {
+        await axios.patch(
+          `http://localhost:8000/api/tasks/${taskId}/status`,
+          { status: "pending" },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        setTasks(
+          tasks.map(task =>
+            task.id === taskId ? { ...task, status: "pending" } : task
+          )
+        );
+      } catch (error) {
+        console.error("Erro ao reverter para pendente:", error);
+      }
     }
   };
 
@@ -154,18 +178,30 @@ const TodoList = () => {
               <FaCheck />
             </button>
           )}
-          <button
-            className="btn btn-primary btn-sm"
-            onClick={() => handleEdit(row)}
-          >
-            <FaEdit />
-          </button>
-          <button
-            className="btn btn-danger btn-sm"
-            onClick={() => handleDelete(row.id)}
-          >
-            <FaTrash />
-          </button>
+          {row.status === "completed" && (
+            <button
+              className="btn btn-warning btn-sm"
+              onClick={() => handleRevertToPending(row.id)}
+            >
+              <FaUndo />
+            </button>
+          )}
+          {row.status !== "completed" && (
+            <>
+              <button
+                className="btn btn-primary btn-sm"
+                onClick={() => handleEdit(row)}
+              >
+                <FaEdit />
+              </button>
+              <button
+                className="btn btn-danger btn-sm"
+                onClick={() => handleDelete(row.id)}
+              >
+                <FaTrash />
+              </button>
+            </>
+          )}
         </div>
       ),
     },
