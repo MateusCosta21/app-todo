@@ -1,0 +1,14 @@
+services:
+  frontend:
+    hostname: frontend
+    container_name: frontend-dev
+    image: node:22.12.0-alpine
+    working_dir: /app
+    user: 'node:1000'
+    volumes:
+      - .:/app:delegated
+    entrypoint: ['/bin/sh', '-c', 'npm i && npm run dev -- --host 0.0.0.0 --no-cache']
+    restart: always
+    env_file: .env
+    ports:
+      - 5188:5173

@@ -1,0 +1,9 @@
+services:
+  frontend:
+    hostname: frontend
+    container_name: frontend
+    build: .
+    restart: always
+    env_file: .env
+    ports:
+      - 5175:80
