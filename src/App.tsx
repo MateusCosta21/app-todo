@@ -18,6 +18,13 @@ const App = () => {
     setIsAuthenticated(!!token);
   }, []);
 
+  const handleLogout = () => {
+    // Limpar os dados de autenticação do localStorage e sessionStorage
+    localStorage.removeItem("access_token");
+    sessionStorage.removeItem("access_token");
+    setIsAuthenticated(false);
+  };
+
   return (
     <Router>
       <div className="app-container">
@@ -26,6 +33,7 @@ const App = () => {
           onLoginClick={() => setShowLogin(true)}
           onRegisterClick={() => setShowRegister(true)}
           onAddTaskClick={() => setShowTaskModal(true)}
+          onLogout={handleLogout}
         />
         <Routes>
           <Route path="/" element={<Home isAuthenticated={isAuthenticated} />} />

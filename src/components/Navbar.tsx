@@ -5,9 +5,10 @@ interface NavbarProps {
   onLoginClick: () => void;
   onRegisterClick: () => void;
   onAddTaskClick: () => void;
+  onLogout: () => void;
 }
 
-const Navbar = ({ isAuthenticated, onLoginClick, onRegisterClick, onAddTaskClick }: NavbarProps) => {
+const Navbar = ({ isAuthenticated, onLoginClick, onRegisterClick, onAddTaskClick, onLogout }: NavbarProps) => {
   return (
     <header className="navbar navbar-expand-lg navbar-light bg-light fixed-top w-100">
       <div className="container">
@@ -20,11 +21,18 @@ const Navbar = ({ isAuthenticated, onLoginClick, onRegisterClick, onAddTaskClick
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto">
             {isAuthenticated ? (
-              <li className="nav-item">
-                <button className="btn btn-primary" onClick={onAddTaskClick}>
-                  Cadastrar Tarefa
-                </button>
-              </li>
+              <>
+                <li className="nav-item">
+                  <button className="btn btn-primary" onClick={onAddTaskClick}>
+                    Cadastrar Tarefa
+                  </button>
+                </li>
+                <li className="nav-item">
+                  <button className="btn btn-link nav-link" onClick={onLogout}>
+                    Logout
+                  </button>
+                </li>
+              </>
             ) : (
               <>
                 <li className="nav-item">

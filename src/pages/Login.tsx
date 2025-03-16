@@ -21,7 +21,7 @@ const Login = () => {
 
         axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.access_token}`;
 
-        window.location.href = '/home'; 
+        window.location.href = '/'; 
       } else {
         setErrorMessage('Token não encontrado!');
       }
