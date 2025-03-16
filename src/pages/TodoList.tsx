@@ -14,15 +14,25 @@ interface Task {
 
 const TodoList = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [editTask, setEditTask] = useState<Task | null>(null);
   const [newTitle, setNewTitle] = useState<string>("");
   const [newDescription, setNewDescription] = useState<string>("");
+  const [filterStatus, setFilterStatus] = useState<string>("all");
 
   useEffect(() => {
     fetchTasks();
   }, []);
+
+  useEffect(() => {
+    if (filterStatus === "all") {
+      setFilteredTasks(tasks);
+    } else {
+      setFilteredTasks(tasks.filter(task => task.status === filterStatus));
+    }
+  }, [tasks, filterStatus]);
 
   const fetchTasks = async () => {
     const token = localStorage.getItem("access_token");
@@ -230,10 +240,23 @@ const TodoList = () => {
       >
         <h2 className="text-center">Lista de Tarefas</h2>
 
+        <div className="mb-3">
+          <label className="form-label">Filtrar por Status</label>
+          <select
+            className="form-select"
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+          >
+            <option value="all">Todos</option>
+            <option value="pending">Pendente</option>
+            <option value="completed">Concluídas</option>
+          </select>
+        </div>
+
         {error ? (
           <div className="alert alert-danger">{error}</div>
         ) : (
-          <DataTable title="Tarefas" columns={columns} data={tasks} pagination />
+          <DataTable title="Tarefas" columns={columns} data={filteredTasks} pagination />
         )}
       </div>
 
