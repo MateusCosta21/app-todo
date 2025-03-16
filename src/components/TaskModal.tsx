@@ -15,7 +15,7 @@ const TaskModal = ({ onClose }: TaskModalProps) => {
 
     try {
       await axios.post(
-        "http://localhost:8000/create",
+        "http://localhost:8000/api/tasks/create",
         { title, description },
         { headers: { Authorization: `Bearer ${token}` } }
       );

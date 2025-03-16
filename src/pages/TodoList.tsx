@@ -15,6 +15,10 @@ interface Task {
 const TodoList = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [editTask, setEditTask] = useState<Task | null>(null);
+  const [newTitle, setNewTitle] = useState<string>("");
+  const [newDescription, setNewDescription] = useState<string>("");
 
   useEffect(() => {
     fetchTasks();
@@ -74,6 +78,38 @@ const TodoList = () => {
     }
   };
 
+  const handleEdit = async (task: Task) => {
+    setEditTask(task);
+    setNewTitle(task.title);
+    setNewDescription(task.description);
+    setModalVisible(true);
+  };
+
+  const handleUpdateTask = async () => {
+    if (!editTask) return;
+
+    const token = localStorage.getItem("access_token");
+
+    try {
+      await axios.put(
+        `http://localhost:8000/api/tasks/${editTask.id}/update`,
+        { title: newTitle, description: newDescription },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setTasks(
+        tasks.map(task =>
+          task.id === editTask.id ? { ...task, title: newTitle, description: newDescription } : task
+        )
+      );
+
+      setModalVisible(false);
+      setEditTask(null);
+    } catch (error) {
+      console.error("Erro ao atualizar tarefa:", error);
+    }
+  };
+
   const columns = [
     {
       name: "Título",
@@ -118,7 +154,10 @@ const TodoList = () => {
               <FaCheck />
             </button>
           )}
-          <button className="btn btn-primary btn-sm">
+          <button
+            className="btn btn-primary btn-sm"
+            onClick={() => handleEdit(row)}
+          >
             <FaEdit />
           </button>
           <button
@@ -161,6 +200,68 @@ const TodoList = () => {
           <DataTable title="Tarefas" columns={columns} data={tasks} pagination />
         )}
       </div>
+
+      {/* Modal de Edição */}
+      {modalVisible && editTask && (
+        <div
+          className="modal d-block"
+          style={{ display: modalVisible ? "block" : "none" }}
+        >
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Editar Tarefa</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setModalVisible(false)}
+                />
+              </div>
+              <div className="modal-body">
+                <div className="mb-3">
+                  <label htmlFor="title" className="form-label">
+                    Título
+                  </label>
+                  <input
+                    type="text"
+                    id="title"
+                    className="form-control"
+                    value={newTitle}
+                    onChange={(e) => setNewTitle(e.target.value)}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="description" className="form-label">
+                    Descrição
+                  </label>
+                  <textarea
+                    id="description"
+                    className="form-control"
+                    value={newDescription}
+                    onChange={(e) => setNewDescription(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setModalVisible(false)}
+                >
+                  Fechar
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleUpdateTask}
+                >
+                  Atualizar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
