@@ -7,14 +7,26 @@ const Register = () => {
   const [password, setPassword] = useState<string>('');
   const [passwordConfirmation, setPasswordConfirmation] = useState<string>('');
   const [message, setMessage] = useState<string>('');
-  const [messageType, setMessageType] = useState<string>(''); 
-  const [showModal, setShowModal] = useState<boolean>(false); 
+  const [messageType, setMessageType] = useState<string>('');
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [errors, setErrors] = useState<{ [key: string]: string[] }>({});  // Para armazenar os erros dos campos
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!name || !email || !password || !passwordConfirmation) {
+      setMessage('Todos os campos são obrigatórios.');
+      setMessageType('danger');
+      setShowModal(true);
+      setTimeout(() => setShowModal(false), 3000);
+      return;
+    }
+
     if (password !== passwordConfirmation) {
-      alert('As senhas não coincidem!');
+      setMessage('As senhas não coincidem!');
+      setMessageType('danger');
+      setShowModal(true);
+      setTimeout(() => setShowModal(false), 3000);
       return;
     }
 
@@ -30,19 +42,30 @@ const Register = () => {
       console.log('Registro bem-sucedido', response.data);
       setMessage('Usuário cadastrado com sucesso!');
       setMessageType('success');
-      setShowModal(true); 
+      setShowModal(true);
       setTimeout(() => {
         setShowModal(false);
       }, 3000);
-    } catch (error) {
-      console.error('Erro ao registrar', error);
-      setMessage('Erro ao registrar usuário. Tente novamente.');
-      setMessageType('danger');
-      setShowModal(true); 
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        const { message, errors } = error.response.data;
+        setMessage(message || 'Erro ao registrar usuário. Tente novamente.');
+        setMessageType('danger');
+        setErrors(errors || {});
+        setShowModal(true);
 
-      setTimeout(() => {
-        setShowModal(false);
-      }, 3000);
+        setTimeout(() => {
+          setShowModal(false);
+        }, 3000);
+      } else {
+        console.error('Erro desconhecido', error);
+        setMessage('Erro desconhecido. Tente novamente.');
+        setMessageType('danger');
+        setShowModal(true);
+        setTimeout(() => {
+          setShowModal(false);
+        }, 3000);
+      }
     }
   };
 
@@ -65,6 +88,7 @@ const Register = () => {
             value={name || ''}
             onChange={(e) => setName(e.target.value || '')}
           />
+          {errors.name && <div className="text-danger">{errors.name.join(', ')}</div>}
         </div>
 
         <div className="mb-3">
@@ -77,6 +101,7 @@ const Register = () => {
             value={email || ''}
             onChange={(e) => setEmail(e.target.value || '')}
           />
+          {errors.email && <div className="text-danger">{errors.email.join(', ')}</div>}
         </div>
         
         <div className="mb-3">
@@ -89,6 +114,7 @@ const Register = () => {
             value={password || ''}
             onChange={(e) => setPassword(e.target.value || '')}
           />
+          {errors.password && <div className="text-danger">{errors.password.join(', ')}</div>}
         </div>
 
         <div className="mb-3">
@@ -101,6 +127,7 @@ const Register = () => {
             value={passwordConfirmation || ''}
             onChange={(e) => setPasswordConfirmation(e.target.value || '')}
           />
+          {errors.password_confirmation && <div className="text-danger">{errors.password_confirmation.join(', ')}</div>}
         </div>
 
         <button type="submit" className="btn btn-primary">Registrar</button>
