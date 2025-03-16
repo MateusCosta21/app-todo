@@ -11,7 +11,6 @@ const Login = () => {
 
   return (
     <div className="container">
-      <h2>Login</h2>
       <form onSubmit={handleLogin}>
         <div className="mb-3">
           <label htmlFor="email" className="form-label">Email</label>
