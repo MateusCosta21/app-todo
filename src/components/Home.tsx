@@ -1,13 +1,15 @@
-const Home = () => {
-  return (
-    <div
-      className="d-flex justify-content-center align-items-center text-center text-white"
-      style={{
-        height: "100vh",
-        width: "100vw",
-        backgroundColor: "black",
-      }}
-    >
+import TodoList from "../pages/TodoList";
+
+interface HomeProps {
+  isAuthenticated: boolean;
+}
+
+const Home = ({ isAuthenticated }: HomeProps) => {
+  return isAuthenticated ? (
+    <TodoList />
+  ) : (
+    <div className="d-flex justify-content-center align-items-center text-center text-white"
+      style={{ height: "100vh", width: "100vw", backgroundColor: "black" }}>
       <div>
         <h1 className="display-4">Bem-vindo ao Todo App!</h1>
         <p className="lead">Gerencie suas tarefas de forma fácil e prática.</p>
