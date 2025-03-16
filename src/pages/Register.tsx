@@ -43,9 +43,13 @@ const Register = () => {
       setMessage('Usuário cadastrado com sucesso!');
       setMessageType('success');
       setShowModal(true);
-      setTimeout(() => {
-        setShowModal(false);
-      }, 3000);
+          // Limpa o formulário e fecha a modal após 3 segundos
+          setTimeout(() => {
+            setName('');
+            setEmail('');
+            setPassword('');
+            setPasswordConfirmation('');
+          }, 3000);
     } catch (error: any) {
       if (error.response && error.response.data) {
         const { message, errors } = error.response.data;
