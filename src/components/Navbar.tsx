@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { FaSignOutAlt } from "react-icons/fa"; 
 
 interface NavbarProps {
   isAuthenticated: boolean;
@@ -9,6 +10,13 @@ interface NavbarProps {
 }
 
 const Navbar = ({ isAuthenticated, onLoginClick, onRegisterClick, onAddTaskClick, onLogout }: NavbarProps) => {
+  const handleLogoutClick = () => {
+    const confirmLogout = window.confirm("Você tem certeza que deseja sair?");
+    if (confirmLogout) {
+      onLogout(); 
+    }
+  };
+
   return (
     <header className="navbar navbar-expand-lg navbar-light bg-light fixed-top w-100">
       <div className="container">
@@ -28,8 +36,8 @@ const Navbar = ({ isAuthenticated, onLoginClick, onRegisterClick, onAddTaskClick
                   </button>
                 </li>
                 <li className="nav-item">
-                  <button className="btn btn-link nav-link" onClick={onLogout}>
-                    Logout
+                  <button className="btn btn-link nav-link" onClick={handleLogoutClick}>
+                    <FaSignOutAlt /> {/* Ícone de Logout */}
                   </button>
                 </li>
               </>
