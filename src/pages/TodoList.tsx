@@ -58,15 +58,15 @@ const TodoList = () => {
     const token = localStorage.getItem("access_token");
 
     try {
-      await axios.put(
-        `http://localhost:8000/api/tasks/${taskId}`,
-        { status: "done" },
+      await axios.patch(
+        `http://localhost:8000/api/tasks/${taskId}/status`,
+        { status: "completed" },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       setTasks(
         tasks.map(task =>
-          task.id === taskId ? { ...task, status: "done" } : task
+          task.id === taskId ? { ...task, status: "completed" } : task
         )
       );
     } catch (error) {
@@ -82,7 +82,7 @@ const TodoList = () => {
       cell: (row: Task) => (
         <span
           style={{
-            textDecoration: row.status === "done" ? "line-through" : "none",
+            textDecoration: row.status === "completed" ? "line-through" : "none",
           }}
         >
           {row.title}
@@ -97,7 +97,7 @@ const TodoList = () => {
       name: "Status",
       selector: (row: Task) => row.status,
       cell: (row: Task) => (
-        <span className={`badge ${row.status === "done" ? "bg-success" : "bg-warning"}`}>
+        <span className={`badge ${row.status === "completed" ? "bg-success" : "bg-warning"}`}>
           {row.status}
         </span>
       ),
