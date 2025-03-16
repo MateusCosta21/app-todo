@@ -55,13 +55,17 @@ const TodoList = () => {
   };
 
   const handleDelete = async (taskId: number) => {
+    if (!window.confirm("Tem certeza que deseja excluir esta tarefa?")) {
+      return;
+    }
+  
     const token = localStorage.getItem("access_token");
-
+  
     try {
       await axios.delete(`http://localhost:8000/api/tasks/${taskId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
+  
       setTasks(tasks.filter(task => task.id !== taskId));
     } catch (error) {
       console.error("Erro ao deletar tarefa:", error);
