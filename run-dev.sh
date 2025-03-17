@@ -4,7 +4,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 echo "Subindo os containers do Docker..."
-docker-compose up -d --build
+docker compose up -d --build
 if [ $? -ne 0 ]; then
     echo "Erro ao subir os containers do Docker. Abortando."
     exit 1
